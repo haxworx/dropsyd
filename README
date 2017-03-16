@@ -1,4 +1,4 @@
-# Server for dropsy client
+   # Server for dropsy client
 
    USAGE
 
@@ -11,3 +11,10 @@
 
    run "make"
 
+   CONTACT
+
+   E-mail: netstar@gmail.com
+   Web: http://haxlab.org
+
+   Client: https://github.com/haxworx/dropsy
+   Server: https://github.com/haxworx/dropsyd (this)

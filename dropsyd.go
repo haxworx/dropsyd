@@ -57,9 +57,9 @@ func Server(authSystem *auth.Auth) {
 }
 
 func ShowAbout() {
-	fmt.Printf("(c) Copyright 2016. Al Poole <netstar@gmail.com>.\n")
-        fmt.Printf("See: http://haxlab.org\n")
-        fmt.Printf("Running: dropsyd daemon\n")
+	fmt.Println("(c) Copyright 2016. Al Poole <netstar@gmail.com>.")
+        fmt.Println("See: http://haxlab.org")
+        fmt.Println("Running: dropsyd daemon")
 }
 
 func main() {

@@ -7,6 +7,7 @@ import(
 	"strings"
 	"os"
         "time"
+	"sync"
 )
 
 const PASSWD_FILE = "config/passwd"
@@ -21,17 +22,18 @@ type User struct {
 type Auth struct {
         Users map[string]User
         last_update int64
-        initialized bool 
 }
 
-func New() (*Auth) {
+func New(system string) (*Auth) {
 	this := new(Auth)
-	this.initialized = false
-        
+       
 	if _, err := os.Stat(PASSWD_FILE); err != nil {
         	fmt.Printf("%s!\n", err)
                 os.Exit(0)
         }
+
+        this.Users = make(map[string]User)
+        this.LoadFromFile()
 
 	return this
 }
@@ -66,18 +68,32 @@ func (self *Auth) LoadFromFile() (bool) {
                 self.Users[tmp_user] = tmp
         }
 
-        self.initialized = true
         self.last_update = time.Now().Unix()
 
         return true
 }
 
-func (self *Auth) Check(user_guess string, pass_guess string) (bool) {
-        if !self.initialized {
-                self.Users = make(map[string]User)
-                self.LoadFromFile()
-        }
+func (self *Auth) WatchConfigFile() {
+	fi, _ := os.Stat(PASSWD_FILE);
 
+	mtime := int64(fi.ModTime().Unix())
+	if mtime > self.last_update {
+		var mutex = &sync.Mutex{}
+		mutex.Lock()
+		for k := range self.Users {
+			delete(self.Users, k)
+		}
+		self.LoadFromFile()
+		mutex.Unlock()
+	}	
+}
+
+func (self *Auth) Check(user_guess string, pass_guess string) (bool) {
+	self.WatchConfigFile()
+
+	var mutex = &sync.RWMutex{}
+
+	mutex.RLock()
         if self.Users[user_guess].username != user_guess {
 		return false
         }
@@ -85,6 +101,7 @@ func (self *Auth) Check(user_guess string, pass_guess string) (bool) {
         if self.Users[user_guess].password != pass_guess {
 		return false
         }
+	mutex.RUnlock()
 
         /* Works! */
 	return true

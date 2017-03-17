@@ -63,7 +63,7 @@ func ShowAbout() {
 }
 
 func main() {
-        authSystem := auth.New()
+        authSystem := auth.New("generic")
 	ShowAbout()
 	Server(authSystem)
 }

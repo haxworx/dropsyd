@@ -36,6 +36,7 @@ func HandleRequest(res http.ResponseWriter, req *http.Request, authSystem *auth.
 		
 		/* Handle password differently */
 		var pass_guess []byte = []byte(req.Header.Get("password"))
+		/* Don't want these hanging about! */
 		for k := range(req.Header) {
 			delete(req.Header, k)
 		}

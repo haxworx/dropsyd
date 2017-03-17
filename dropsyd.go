@@ -25,7 +25,7 @@ func ClientSendStatus(res http.ResponseWriter, ok bool) (int) {
 func HandleRequest(res http.ResponseWriter, req *http.Request, authSystem *auth.Auth) {
 	if req.Method == "POST" {
 		var header_list = []string {
-			"username", "password", "action", "directory", "filename",
+			"username", "action", "directory", "filename",
 		}
 
 		headers := make(map[string]string)
@@ -33,12 +33,18 @@ func HandleRequest(res http.ResponseWriter, req *http.Request, authSystem *auth.
 		for _, name := range(header_list) {
 			headers[name] = req.Header.Get(name)
 		}
+		
+		/* Handle password differently */
+		var pass_guess []byte = []byte(req.Header.Get("password"))
+		for k := range(req.Header) {
+			delete(req.Header, k)
+		}
 
-		status := authSystem.Check(headers["username"], headers["password"])
+		/* auth.Check will "zero" the memory 
+		status := authSystem.Check(headers["username"], pass_guess)
 		ClientSendStatus(res, status); if status != true {
 			return
 		}
-
 		action := action.New(req.Body, headers["action"])
 		status = action.Process(headers["username"], headers["directory"], headers["filename"])
 		ClientSendStatus(res, status)

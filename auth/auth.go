@@ -88,7 +88,7 @@ func (self *Auth) WatchConfigFile() {
 	}	
 }
 
-func (self *Auth) Check(user_guess string, pass_guess string) (bool) {
+func (self *Auth) Check(user_guess string, pass_guess []byte) (bool) {
 	self.WatchConfigFile()
 
 	var mutex = &sync.RWMutex{}
@@ -98,11 +98,14 @@ func (self *Auth) Check(user_guess string, pass_guess string) (bool) {
 		return false
         }
 
-        if self.Users[user_guess].password != pass_guess {
+        if self.Users[user_guess].password != string(pass_guess) {
 		return false
         }
 	mutex.RUnlock()
 
+	for i := 0; i < len(pass_guess); i++ {
+		pass_guess[i] = 0
+	}
         /* Works! */
 	return true
 }

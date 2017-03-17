@@ -8,6 +8,7 @@ import(
 	"os"
         "time"
 	"sync"
+	"crypto/sha256"
 )
 
 const PASSWD_FILE = "config/passwd"
@@ -32,6 +33,7 @@ func New(system string) (*Auth) {
                 os.Exit(0)
         }
 
+	if system != "generic" { }
         this.Users = make(map[string]User)
         this.LoadFromFile()
 
@@ -61,10 +63,10 @@ func (self *Auth) LoadFromFile() (bool) {
                 tmp_user := line[0:eou]
 
                 eop := strings.Index(line, "\n")
-                tmp_pass := line[eou + 1:eop];
+                tmp_hash := line[eou + 1:eop];
                 var tmp User = User{}
                 tmp.username = tmp_user
-                tmp.password = tmp_pass
+                tmp.password = tmp_hash
                 self.Users[tmp_user] = tmp
         }
 
@@ -88,24 +90,28 @@ func (self *Auth) WatchConfigFile() {
 	}	
 }
 
+
 func (self *Auth) Check(user_guess string, pass_guess []byte) (bool) {
 	self.WatchConfigFile()
 
-	var mutex = &sync.RWMutex{}
+	var mutex = &sync.Mutex{}
+	mutex.Lock()
 
-	mutex.RLock()
         if self.Users[user_guess].username != user_guess {
 		return false
         }
 
-        if self.Users[user_guess].password != string(pass_guess) {
+	pass_hash := fmt.Sprintf("%x", sha256.Sum256([]byte(pass_guess)))
+	if self.Users[user_guess].password != pass_hash  {
 		return false
-        }
-	mutex.RUnlock()
+	}
+
+	mutex.Unlock()
 
 	for i := 0; i < len(pass_guess); i++ {
 		pass_guess[i] = 0
 	}
+
         /* Works! */
 	return true
 }

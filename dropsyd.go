@@ -25,24 +25,19 @@ func ClientSendStatus(res http.ResponseWriter, ok bool) (int) {
 func HandleRequest(res http.ResponseWriter, req *http.Request, authSystem *auth.Auth) {
 	if req.Method == "POST" {
 		var header_list = []string {
-			"username", "action", "directory", "filename",
+			"username", "password", "action", "directory", "filename",
 		}
 
 		headers := make(map[string]string)
 
 		for _, name := range(header_list) {
 			headers[name] = req.Header.Get(name)
-		}
-		
-		/* Handle password differently */
-		var pass_guess []byte = []byte(req.Header.Get("password"))
-		/* Get rid of these too! */
-		for k := range(req.Header) {
-			delete(req.Header, k)
-		}
-
-		/* auth.Check will "zero" the memory */
-		status := authSystem.Check(headers["username"], pass_guess)
+			req.Header[name] = nil
+			delete(req.Header, name)
+		}; req.Header = nil
+	
+			
+		status := authSystem.Check(headers["username"], headers["password"])
 		ClientSendStatus(res, status); if status != true {
 			return
 		}

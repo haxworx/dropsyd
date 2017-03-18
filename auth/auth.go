@@ -91,7 +91,7 @@ func (self *Auth) WatchConfigFile() {
 }
 
 
-func (self *Auth) Check(user_guess string, pass_guess []byte) (bool) {
+func (self *Auth) Check(user_guess string, pass_guess string) (bool) {
 	self.WatchConfigFile()
 
 	var mutex = &sync.Mutex{}
@@ -107,10 +107,6 @@ func (self *Auth) Check(user_guess string, pass_guess []byte) (bool) {
 	}
 
 	mutex.Unlock()
-
-	for i := 0; i < len(pass_guess); i++ {
-		pass_guess[i] = 0
-	}
 
         /* Works! */
 	return true

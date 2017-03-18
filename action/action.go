@@ -9,7 +9,7 @@ import(
 	"path/filepath"
 )
 
-const STORAGE_ROOT = "storage"
+const STORAGE_ROOT = "storage_root"
 
 func DirIsEmpty(directory string) bool {
 	count := 0

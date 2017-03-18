@@ -45,7 +45,7 @@ func (self *Action) Save(user string, dir string, file string) (bool) {
         }
 
 	var path = filepath.Join(STORAGE_ROOT, user, dir)
-        os.MkdirAll(path, 0777)
+        os.MkdirAll(path, 0755)
 
 	path = filepath.Join(STORAGE_ROOT, user, dir, file)
 

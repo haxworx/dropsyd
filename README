@@ -4,10 +4,8 @@
 
    Create TLS certificate and keys with "keys_config.sh"
 
-   To add users to the system to each line of config/passwd
-   add:
-
-   "username:password\n"
+   Use the tool adduser.go to add users to this server
+   instance.
 
    run "make"
 

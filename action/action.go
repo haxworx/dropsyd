@@ -40,9 +40,6 @@ func New(reader io.Reader, action string) (*Action) {
 }
 
 func (self *Action) Save(user string, dir string, file string) (bool) {
-
-	var buf = self.reader;
-
 	if user == "" || dir == "" || file == "" {
                 return false
         }
@@ -50,21 +47,27 @@ func (self *Action) Save(user string, dir string, file string) (bool) {
 	var path = filepath.Join(STORAGE_ROOT, user, dir)
         os.MkdirAll(path, 0777)
 
-	bytes, err := ioutil.ReadAll(buf)
-	if err != nil {
-		return false
-	}
-
 	path = filepath.Join(STORAGE_ROOT, user, dir, file)
 
 	fmt.Printf("create %s\n", path)
+	
 	f, err := os.Create(path)
         if err != nil {
                 fmt.Printf("ERROR: could not create: %s!\n", path)
 		return false
         }
 
-	f.Write(bytes)
+	r := self.reader;
+
+	var buf = make([]byte, 4096)
+	for {
+		len, err := r.Read(buf)
+		f.Write(buf[:len])	
+		if err != nil && err == io.EOF {
+			break;
+		}
+	}
+
 	f.Close()
 
         return true

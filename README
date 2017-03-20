@@ -2,12 +2,13 @@
 
    USAGE
 
-   Create TLS certificate and keys with "keys_config.sh"
+   Set up TLS certificate and add first user by running
+   "configure.sh".
 
-   Use the tool adduser.go to add users to this server
-   instance.
+   Use the tool adduser.go to add or change users with 
+   this server instance.
 
-   run "make"
+   To "run" execute "make"
 
    CONTACT
 

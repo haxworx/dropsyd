@@ -18,7 +18,7 @@ func main() {
 	user = user[0:len(user) -1]
 	fmt.Print("Pass: ")
 	pass, _ := r.ReadBytes('\n')
-	pass = pass[0:len(pass) - 1] 
+	pass = pass[0:len(pass) - 1]
 
 	sum := sha256.Sum256(pass)
 
@@ -37,18 +37,18 @@ func main() {
 		for {
 			bytes, err := r.ReadBytes('\n')
 			if err != nil { break }
-	
+
 			line := string(bytes)
 			if strings.HasPrefix(line, existing) {
 				output = output + insert_user
 				new_user = false
 			} else {
 				output = output + line
-			} 
+			}
 		}
 
-		m.Close()	
-	} 
+		m.Close()
+	}
 
 	if (new_user) {
 		output += insert_user

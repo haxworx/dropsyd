@@ -35,7 +35,6 @@ func HandleRequest(res http.ResponseWriter, req *http.Request, authSystem *auth.
 			req.Header[name] = nil
 			delete(req.Header, name)
 		}; req.Header = nil
-	
 			
 		status := authSystem.Check(headers["username"], headers["password"])
 		ClientSendStatus(res, status); if status != true {
